@@ -1,0 +1,73 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"/>
+<title>VueとNodeでチャット！</title>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<style>
+.list-item {
+}
+.list-enter-active, .list-leave-active {
+  transition: all .30s;
+}
+.list-enter, .list-leave-to {
+  opacity: 0;
+  transform: translateX(-100px);
+}
+.ts {
+	color: gray;
+	font-size: 50%;
+}
+</style>
+</head>
+<body>
+
+<h1>VueとNodeでチャット！</h1>
+
+<div id="app">
+	<input type="text" v-model="chat">
+	<button v-on:click="send">send</button>
+	<transition-group name="list" tag="ol">
+		<chat-item
+			v-for="item in list"
+			v-bind:key="item.ts"
+			v-bind:ts="new Date(parseInt(item.ts))"
+			v-bind:text="item.text"
+			class="list-item"
+		></chat-item>
+	</transition-group>
+	<button v-on:click="clear">clear</button>
+</div>
+
+
+<script>'use strict'
+Vue.component('chat-item', {
+	props: [ 'text', 'ts' ],
+  template: '<li>{{ text }} <span class=ts>{{ ts }}</span></li>'
+})
+
+new Vue({
+	el: '#app',
+	data: {
+		list: [],
+		chat: ''
+	},
+	mounted: function() {
+		this.show()
+		setInterval(() => { this.show() }, 1000)
+	},
+	methods: {
+		show: async function() {
+			this.list = (await axios.get('/api/list')).data
+			console.log(this.list)
+		},
+		send: async function() {
+			await axios.get('/api/add?text=' + encodeURIComponent(this.chat) + "&ts=" + Date.now())
+			console.log('send')
+		},
+		clear: function() {
+			axios.get('/api/clear')
+		}
+	}
+})
+</script>
+
+</body></html>
