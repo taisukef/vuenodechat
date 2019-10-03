@@ -62,7 +62,7 @@ new Vue({
 		send: async function() {
 			const text = encodeURIComponent(this.chat)
 			const ts = Date.now()
-			await axios.get('/api/add?text=' + text + "&amp;amp;ts=" + ts)
+			await axios.get('/api/add?text=' + text + "&ts=" + ts)
 		},
 		clear: function() {
 			axios.get('/api/clear')
