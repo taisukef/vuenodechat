@@ -70,7 +70,7 @@ function serveStatic(res, fn) {
     fn += "index.html"
   
   const ext = fn.substring(fn.lastIndexOf('.') + 1)
-  const type = CONTENT_TYPE[ext]
+  let type = CONTENT_TYPE[ext]
   if (!type)
     type = 'text/plain'
   try {
