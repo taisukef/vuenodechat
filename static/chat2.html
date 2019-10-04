@@ -1,0 +1,85 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"/>
+<title>VueとNodeでチャット！ WebSocket編</title>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<style>
+.list-item {
+}
+.list-enter-active, .list-leave-active {
+  transition: all .30s;
+}
+.list-enter, .list-leave-to {
+  opacity: 0;
+  transform: translateX(-100px);
+}
+.ts {
+	color: gray;
+	font-size: 50%;
+}
+</style>
+</head>
+<body>
+
+<h1>VueとNodeでチャット！ WebSocket編</h1>
+
+<div id="app">
+	<input type="text" v-model="chat">
+	<button v-on:click="send">send</button>
+	<transition-group name="list" tag="ol">
+		<chat-item
+			v-for="item in list"
+			v-bind:key="item.ts"
+			v-bind:ts="new Date(parseInt(item.ts))"
+			v-bind:text="item.text"
+			class="list-item"
+		></chat-item>
+	</transition-group>
+	<button v-on:click="clear">clear</button>
+</div>
+
+
+<script>'use strict'
+Vue.component('chat-item', {
+	props: [ 'text', 'ts' ],
+  template: '<li>{{ text }} <span class=ts>{{ ts }}</span></li>'
+})
+
+new Vue({
+	el: '#app',
+	data: {
+		list: [],
+		chat: '',
+		sock: null
+	},
+	mounted: function() {
+		this.sock = new WebSocket('ws://127.0.0.1:5001')
+		this.sock.addEventListener('open', function(e) {
+				console.log('open')
+		})
+		const self = this
+		this.sock.addEventListener('message', function(e) {
+			const json = JSON.parse(e.data)
+			console.log(json)
+			if (json.cmd == 'send') {
+				self.list.push(json)
+			} else if (json.cmd == 'clear') {
+				self.list = []
+			}
+		})
+	},
+	methods: {
+		send: async function() {
+			const ts = Date.now()
+			const p = { cmd: 'send', text: this.chat, ts: ts }
+			this.sock.send(JSON.stringify(p))
+			this.chat = ""
+		},
+		clear: function() {
+			const p = { cmd: 'clear' }
+			this.sock.send(JSON.stringify(p))
+		}
+	}
+})
+</script>
+
+</body></html>
