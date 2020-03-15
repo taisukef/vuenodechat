@@ -1,0 +1,22 @@
+{
+  "name": "vuenodechat",
+  "version": "1.0.0",
+  "description": "Vue.js x Node.js でつくろう、ウェブサービスの基本「チャット」   https://fukuno.jig.jp/2628",
+  "main": "step0.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/taisukef/vuenodechat.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/taisukef/vuenodechat/issues"
+  },
+  "homepage": "https://github.com/taisukef/vuenodechat#readme",
+  "dependencies": {
+    "ws": "^7.2.3"
+  }
+}
